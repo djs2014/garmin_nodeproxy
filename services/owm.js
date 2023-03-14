@@ -243,6 +243,22 @@ exports.convertTestdata = function (appid, lat, lon, data, maxHours, maxMinutes,
     return mod;
 }
 
+exports.convertOWMError = function (status, body) {
+    let converted = {};
+    converted.status = status;
+    try {
+        let parsed = JSON.parse(body);
+        converted.owmstatus = parsed.status;       
+        converted.error = parsed.message;       
+        if (converted.error) {
+            converted.error = converted.error.substring(0, 100);
+        }
+    } catch (ex) {
+        console.log(ex);
+    }
+    return converted;
+}
+
 exports.getCachedAlerts = function (appid, lat, lon) {
     let key = getCacheKey(appid, lat, lon);
     let alerts = null;
