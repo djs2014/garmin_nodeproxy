@@ -1,6 +1,9 @@
 todo:
 
 # owm
+- minutely - starts at moment of call
+  - display # minutes when start to rain,
+  - or show grid per 10 min ..
 - test if lat, lon in less 1 decimal gives other results.
 - handle multiple alerts
 
