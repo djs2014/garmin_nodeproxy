@@ -1412,20 +1412,20 @@
     },
     {
       "sender_name": "KNMI Koninklijk Nederlands Meteorologisch Instituut",
-      "event": "Moderate snow-ice warning 5",
+      "event": "Moderate snow warning 5",
       "start": 1678474800,
       "end": 1678528800, 
-      "description": "Risk of slippery roads due to (earlier) sleet/snowfall .",
+      "description": "Second alert message. Risk of slippery roads due to (earlier) sleet/snowfall.",
       "tags": [
         "Snow/Ice"
       ]
     },
     {
       "sender_name": "KNMI Koninklijk Nederlands Meteorologisch Instituut",
-      "event": "Moderate snow-ice warning 3",
+      "event": "Moderate ice warning 3",
       "start": 1678474800,
       "end": 1678528800, 
-      "description": "Risk of slippery roads due to (earlier) sleet/snowfall .",
+      "description": "Third alert message. Risk of slippery roads due to (earlier) sleet/snowfall.",
       "tags": [
         "Snow/Ice"
       ]

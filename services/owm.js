@@ -27,24 +27,27 @@ let getOWMweatherId = function (item, def) {
     return getPropValue(item.weather[0], "id", def);
 }
 
-let getOWMweatherMinutely = function (minutely, maxMinutes, def) {
+// for 1 hour
+let getOWMweatherMinutely = function (minutely, def) {
     if (!minutely || minutely.length == 0) { return def; }
-    if (maxMinutes > 60) { maxMinutes = 60; }
-
+    
     let total = 0;
     let dt_start = 0;
+    let max_pop = 0;
     let pops = [];
-    for (let idx = 0; idx < maxMinutes; idx++) {
+    for (let idx = 0; idx < 60; idx++) {
         let item = minutely[idx];
         //console.log(item);
         if (dt_start == 0) { dt_start = getPropValue(item, "dt", 0); }
         let pop = getPropValue(item, "precipitation", 0);
         pops.push(pop);
         total = total + pop;
+        max_pop = Math.max(pop, max_pop);
     }
     if (total == 0) { pops = []; }
     return {
         dt_start: dt_start,
+        max: max_pop,
         pops: pops
     }
 }
@@ -132,7 +135,8 @@ let getOWMAlerts = function (key, owmAlerts, def) {
         alert.evt = getPropValue(item, "event", "");
         alert.dts = getPropValue(item, "start", 0);
         alert.dte = getPropValue(item, "end", 0);
-        alert.desc = getPropValue(item, "description", "");
+        // more than 100 chars doesnt fit on screen
+        alert.desc = getPropValue(item, "description", "").substring(0, 100);
         
         alerts.push([alert.evt, alert.dts, alert.dte, alert.desc])       
         
@@ -177,15 +181,15 @@ let getCacheKey = function (appid, lat, lon) {
     }
 }
 
-let parseOWMdata = function (appid, lat, lon, data, maxHours, maxMinutes, compact, getAlerts) {
+let parseOWMdata = function (appid, lat, lon, data, maxHours, showMinutelyForecast, compact, getAlerts) {
     let mod = {};
     try {
         let jsonParsed = JSON.parse(data);
 
         mod.current = getOWMWeatherCurrent(jsonParsed, compact);
         // minutely, only available for payed subscription to OWM 
-        if (maxMinutes > 0) {
-            mod.minutely = getOWMweatherMinutely(jsonParsed.minutely, maxMinutes, {});
+        if (showMinutelyForecast) {
+            mod.minutely = getOWMweatherMinutely(jsonParsed.minutely,{});
         }
         // hourly
         mod.hourly = getOWMweatherHourly(jsonParsed.hourly, maxHours, compact, []);
@@ -207,12 +211,12 @@ let getBinarySize = function(string) {
     return Buffer.byteLength(string, 'utf8');
 }
 
-exports.convertOWMdata = function (appid, lat, lon, data, maxHours, maxMinutes, compact, getAlerts) {
-    return parseOWMdata(appid, lat, lon, data, maxHours, maxMinutes, compact, getAlerts);
+exports.convertOWMdata = function (appid, lat, lon, data, maxHours, showMinutelyForecast, compact, getAlerts) {
+    return parseOWMdata(appid, lat, lon, data, maxHours, showMinutelyForecast, compact, getAlerts);
 }
 
-exports.convertTestdata = function (appid, lat, lon, data, maxHours, maxMinutes, compact, getAlerts) {
-    let mod = parseOWMdata(appid, lat, lon, data, maxHours, maxMinutes, compact, getAlerts);
+exports.convertTestdata = function (appid, lat, lon, data, maxHours, showMinutelyForecast, compact, getAlerts) {
+    let mod = parseOWMdata(appid, lat, lon, data, maxHours, showMinutelyForecast, compact, getAlerts);
     try {
         // adjust dates
         mod.current.dt = Math.floor(Date.now() / 1000);

@@ -160,7 +160,7 @@ app.get("/owm_one", async function (req, res) {
 
         let getAlerts = req.query.alerts;
         let maxHours = req.query.maxhours;
-        let maxMinutes = req.query.maxminutes;
+        let showMinutelyForecast = req.query.minutely=="true";
         let compact = req.query.proxy && req.query.proxy >= "2.0";
 
         // let getAlertDetails = req.query.alertdetails == "true";
@@ -171,14 +171,16 @@ app.get("/owm_one", async function (req, res) {
         // }
 
         let resBody = "";
-        let useTestData = req.query.usetestdata == "true";
-        if (useTestData) {
+        let testScenario = req.query.testScenario;
+        if (testScenario && testScenario>0 && testScenario<3) {
             try {
-                console.log("use test data");
-                resBody = await fs.readFile('./data/owm_sample.json', { encoding: 'utf8' });
+                console.log("use test data: " + testScenario);
+                // 1: rain
+                // 2: alerts
+                resBody = await fs.readFile('./data/owm_sample_'+testScenario+'.json', { encoding: 'utf8' });
                 res.writeHead(200, { 'Content-Type': 'application/json' });
                 res.end(JSON.stringify(owm.convertTestdata(req.query.appid, req.query.lat, req.query.lon,
-                    resBody, maxHours, maxMinutes, compact, getAlerts)));
+                    resBody, maxHours, showMinutelyForecast, compact, getAlerts)));
                 return;
             } catch (err) {
                 console.log(err);
@@ -200,7 +202,7 @@ app.get("/owm_one", async function (req, res) {
 
         res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify(owm.convertOWMdata(req.query.appid, req.query.lat, req.query.lon,
-            resBody, maxHours, maxMinutes, compact, getAlerts)));
+            resBody, maxHours, showMinutelyForecast, compact, getAlerts)));
     } catch (err) {
         res.writeHead(500);
         res.end(err.message);
