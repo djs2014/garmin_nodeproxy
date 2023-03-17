@@ -158,7 +158,7 @@ app.get("/owm_one", async function (req, res) {
         }
         console.log('OWM uri: ' + uri);
 
-        let getAlerts = req.query.alerts;
+        let getAlerts = req.query.alerts=="true";
         let maxHours = req.query.maxhours;
         let showMinutelyForecast = req.query.minutely=="true";
         let compact = req.query.proxy && req.query.proxy >= "2.0";

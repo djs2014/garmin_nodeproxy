@@ -1,5 +1,8 @@
 todo:
 
+docu:
+
+    - 
 # owm
 52.189 enough?
 test alerts 3 after each other.
